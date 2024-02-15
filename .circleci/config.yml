@@ -1,0 +1,50 @@
+version: 2.1
+
+jobs:
+  build:
+    working_directory: ~/app
+    docker:
+      - image: circleci/node:14.17.0
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker Image
+          command: docker build -t plenary-crm-front .
+      - run:
+          name: Save Docker Image
+          command: docker save -o ~/app/plenary-crm-front.tar plenary-crm-front
+      - persist_to_workspace:
+          root: .
+          paths:
+            - plenary-crm-front.tar
+  deploy:
+    machine:
+      enabled: true
+    steps:
+      - attach_workspace:
+          at: /tmp/app
+      - add_ssh_keys:
+          fingerprints:
+            - "b3:0f:89:a2:92:6a:41:2f:e2:76:3f:5d:a3:ba:ff:69"
+      - run:
+          name: Configure SSH Key
+          command: echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+      - run:
+          name: Pull and Run Docker Image on Server
+          command: |
+            scp -i ~/.ssh/id_rsa /tmp/app/plenary-crm-front.tar $SSH_USER@$SSH_HOST:/tmp/plenary-crm-front.tar
+            ssh $SSH_USER@$SSH_HOST 'if [ "$(docker ps -q -f name=plenary-crm-front)" ]; then docker stop plenary-crm-front && docker rm plenary-crm-front; fi'
+            ssh $SSH_USER@$SSH_HOST "docker load -i /tmp/plenary-crm-front.tar"
+            ssh $SSH_USER@$SSH_HOST "docker run -d -p 80:80 --name plenary-crm-front plenary-crm-front:latest"
+workflows:
+  pipeline:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - main

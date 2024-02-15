@@ -1,0 +1,35 @@
+<div class="plenary-horizontal-navigation-wrapper">
+  <ng-container *ngFor="let item of navigation; trackBy: trackByFn">
+    <ng-container *ngIf="(item.hidden && !item.hidden(item)) || !item.hidden">
+      <ng-container *ngIf="item.type === 'basic'">
+        <plenary-horizontal-navigation-basic-item
+          class="plenary-horizontal-navigation-menu-item"
+          [item]="item"
+          [name]="name"
+        ></plenary-horizontal-navigation-basic-item>
+      </ng-container>
+
+      <ng-container
+        *ngIf="
+          item.type === 'aside' ||
+          item.type === 'collapsable' ||
+          item.type === 'group'
+        "
+      >
+        <plenary-horizontal-navigation-branch-item
+          class="plenary-horizontal-navigation-menu-item"
+          [item]="item"
+          [name]="name"
+        ></plenary-horizontal-navigation-branch-item>
+      </ng-container>
+
+      <ng-container *ngIf="item.type === 'spacer'">
+        <plenary-horizontal-navigation-spacer-item
+          class="plenary-horizontal-navigation-menu-item"
+          [item]="item"
+          [name]="name"
+        ></plenary-horizontal-navigation-spacer-item>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</div>

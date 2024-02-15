@@ -1,0 +1,145 @@
+<div class="relative flex flex-col justify-between w-full h-full">
+  <ng-container>
+    <div class="absolute top-0 right-0 pt-4 pr-4">
+      <button mat-icon-button [matDialogClose]="undefined">
+        <mat-icon
+          class="text-secondary"
+          svgIcon="heroicons_outline:x"
+        ></mat-icon>
+      </button>
+    </div>
+  </ng-container>
+
+  <div
+    class="flex flex-row items-center p-10 pb-6 sm:pb-8"
+  >
+    <ng-container>
+      <div
+        class="flex flex-0 items-center justify-center w-10 h-10 mr-4 rounded-full text-primary-600 bg-primary-100 dark:text-primary-50 dark:bg-primary-600"
+      >
+        <mat-icon
+          class="text-current"
+          [svgIcon]="
+            data.id
+              ? 'heroicons_outline:pencil-square'
+              : 'heroicons_outline:plus-circle'
+          "
+        ></mat-icon>
+      </div>
+    </ng-container>
+
+    <ng-container>
+      <div
+        class="flex flex-col items-start mt-4 sm:mt-0 sm:pr-8 space-y-1 text-center sm:text-left"
+      >
+        <ng-container>
+          <div
+            class="text-xl leading-6 font-medium"
+            [innerHTML]="
+              data.id
+                ? 'Permissões - Editar'
+                : 'Permissões - Criar'
+            "
+          ></div>
+        </ng-container>
+
+        <ng-container>
+          <div
+            class="text-secondary"
+            [innerHTML]="
+              data.id
+                ? 'Editar uma permissão existente.'
+                : 'Criar uma nova permissão.'
+            "
+          ></div>
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+
+  <div
+    class="flex flex-col px-8 py-2 bg-card rounded-2xl overflow-hidden"
+  >
+    <ng-container>
+      <form [formGroup]="form">
+        <div class="flex flex-row gap-4 gt-xs:flex-row">
+          <mat-form-field class="flex-auto gt-xs:pr-3">
+            <mat-label>Nome do menu</mat-label>
+            <input [formControlName]="'name'" type="text" matInput />
+            <mat-error *ngIf="form.get('name').hasError('required')">
+              O nome do menu é obrigatório.
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="flex-auto gt-xs:pr-3">
+            <mat-label>Rota do menu</mat-label>
+            <input [formControlName]="'route'" type="text" matInput />
+            <mat-error *ngIf="form.get('route').hasError('required')">
+              O rota do menu é obrigatório.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="flex flex-row gap-4 gt-xs:flex-row">
+          <mat-form-field class="flex-auto gt-xs:pr-3">
+            <mat-label>Chave do menu</mat-label>
+            <input [formControlName]="'menuKey'" type="text" matInput />
+            <mat-error *ngIf="form.get('menuKey').hasError('required')">
+              O nome do menu é obrigatório.
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="flex-auto gt-xs:pr-3">
+            <mat-label>Grupo de menu</mat-label>
+            <mat-select formControlName="menuGroupId">
+              <mat-option *ngFor="let menuGroup of menusGroups" [value]="menuGroup.id">
+                {{ menuGroup.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('menuGroupId').hasError('required')">
+              O grupo de menu é obrigatório.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="flex flex-col gt-xs:flex-row">
+          <mat-form-field class="flex-auto gt-xs:pr-3">
+            <mat-label>Ícone do menu</mat-label>
+            <input [formControlName]="'icon'" type="icon" matInput />
+            <mat-error *ngIf="form.get('icon').hasError('required')">
+              O ícone do menu é obrigatório.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </form>
+    </ng-container>
+
+    <privileges-form
+      *ngIf="menu"
+      [actionsMenus]="menu.actionsMenus"
+      (emitter)="syncPrivileges($event)"
+    ></privileges-form>
+  </div>
+
+  <ng-container>
+    <div
+    class="flex items-center justify-end px-6 py-4 space-x-3 bg-gray-50 dark:bg-black dark:bg-opacity-10"
+    >
+      <ng-container>
+        <button mat-stroked-button matDialogClose>Cancelar</button>
+      </ng-container>
+
+      <ng-container>
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="handleSaveOrUpdate()"
+          [disabled]="form.invalid"
+        >
+          <span class="text-white" *ngIf="!form.disabled">Salvar</span>
+          <mat-progress-spinner
+            *ngIf="form.disabled"
+            [diameter]="24"
+            [mode]="'indeterminate'"
+          ></mat-progress-spinner>
+        </button>
+      </ng-container>
+    </div>
+  </ng-container>
+</div>

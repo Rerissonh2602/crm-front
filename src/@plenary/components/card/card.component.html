@@ -1,0 +1,16 @@
+<ng-container *ngIf="flippable">
+  <div class="plenary-card-front">
+    <ng-content select="[plenaryCardFront]"></ng-content>
+  </div>
+
+  <div class="plenary-card-back">
+    <ng-content select="[plenaryCardBack]"></ng-content>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="!flippable">
+  <ng-content></ng-content>
+  <div class="plenary-card-expansion" *ngIf="expanded" [@expandCollapse]>
+    <ng-content select="[plenaryCardExpansion]"></ng-content>
+  </div>
+</ng-container>

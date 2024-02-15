@@ -1,0 +1,439 @@
+<div
+  class="flex flex-col flex-auto xs:min-w-screen sm:w-128 z-100 overflow-y-visible bg-white dark:bg-[#101010] border-l border-[#DCE0E4] dark:border-[#404040]"
+>
+  <form
+    class="flex flex-col w-full flex-auto p-6 pt-10 sm:p-8 sm:pt-10 overflow-y-auto"
+    [formGroup]="form"
+  >
+    <div class="flex items-center justify-end -mt-3">
+      <!-- <button class="flex" mat-icon-button (click)="closeModal()">
+        <mat-icon [svgIcon]="'mat_outline:close'"></mat-icon>
+      </button> -->
+      <div class="flex items-center">
+        <div class="flex items-center">
+          <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+            <mat-icon [svgIcon]="'mat_outline:more_vert'"></mat-icon>
+          </button>
+          <mat-menu #moreMenu="matMenu">
+            <button mat-menu-item (click)="setLeadWin(this.id)">
+              <mat-icon [svgIcon]="'heroicons_outline:check'"></mat-icon>
+              <span>Marcar como fechado ganho</span>
+            </button>
+            <button mat-menu-item (click)="setLeadLost(this.id)">
+              <mat-icon [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+              <span>Marcar como fechado perdido</span>
+            </button>
+            <button mat-menu-item (click)="archiveLead(this.id)">
+              <mat-icon [svgIcon]="'heroicons_outline:archive-box'"></mat-icon>
+              <span>Arquivar o lead</span>
+            </button>
+          </mat-menu>
+
+          <button mat-icon-button (click)="deleteLead(this.id)">
+            <mat-icon [svgIcon]="'mat_outline:delete'"></mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider class="mt-6 mb-8"></mat-divider>
+
+    <div>
+      <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+        <mat-label>Título</mat-label>
+        <textarea
+          matInput
+          [spellcheck]="false"
+          cdkTextareaAutosize
+          formControlName="name"
+          #titleField
+        ></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="mt-4">
+      <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+        <mat-label>Descrição</mat-label>
+        <textarea
+          matInput
+          [formControlName]="'description'"
+          [spellcheck]="false"
+          cdkTextareaAutosize
+        ></textarea>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <div class="text-lg font-medium py-4">Informações da oportunidade:</div>
+      <div>
+        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+          <mat-label>Nome</mat-label>
+          <textarea
+            matInput
+            [spellcheck]="false"
+            cdkTextareaAutosize
+            formControlName="customerName"
+            #titleField
+          ></textarea>
+        </mat-form-field>
+        <mat-form-field class="w-full mt-4" [subscriptSizing]="'dynamic'">
+          <mat-label>E-mail</mat-label>
+          <textarea
+            matInput
+            [spellcheck]="false"
+            cdkTextareaAutosize
+            formControlName="email"
+            #titleField
+          ></textarea>
+        </mat-form-field>
+      </div>
+      <div class="mt-4">
+        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+          <mat-label>Valor</mat-label>
+          <input
+            matInput
+            formControlName="budget"
+            (blur)="transformAmount()"
+            [spellcheck]="false"
+          />
+        </mat-form-field>
+      </div>
+      <div class="mt-4">
+        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+          <mat-label>Cargo</mat-label>
+          <textarea
+            matInput
+            [spellcheck]="false"
+            cdkTextareaAutosize
+            formControlName="customerRole"
+            #titleField
+          ></textarea>
+        </mat-form-field>
+        <div class="flex flex-row items-center justify-center gap-4">
+          <mat-form-field class="w-full mt-4" [subscriptSizing]="'dynamic'">
+            <mat-label>Celular</mat-label>
+            <textarea
+              matInput
+              plenaryPhoneMask
+              [spellcheck]="false"
+              cdkTextareaAutosize
+              formControlName="phone"
+              #titleField
+            ></textarea>
+          </mat-form-field>
+
+          <a
+            *ngIf="form.get('phone').value"
+            [href]="getWhatsAppLink()"
+            target="_blank"
+            rel="noopener"
+            class="relative flex w-fit items-center p-4 mr-2 leading-9 rounded-full shadow-sm border dark:bg-[#202020] text-default cursor-pointer"
+          >
+            <mat-icon
+              class="icon-size-5 text-current"
+              [svgIcon]="'mat_outline:call'"
+            ></mat-icon>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <div class="font-medium">Data de lembrete</div>
+      <div class="flex flex-row gap-4">
+        <div
+          class="relative flex w-fit items-center mt-1.5 px-4 leading-9 rounded-full shadow-sm bg-[#F9F9F9] dark:bg-[#202020] text-default cursor-pointer"
+          (click)="dueDatePicker.open()"
+        >
+          <mat-icon
+            class="icon-size-5 text-current"
+            [svgIcon]="'heroicons_solid:calendar'"
+          ></mat-icon>
+          <span class="ml-2 text-md font-medium">
+            <ng-container class="text-white" *ngIf="form.get('dueAt')?.value">{{
+              form.get('dueAt').value | date : 'dd/MM/yyyy'
+            }}</ng-container>
+            <ng-container class="text-white" *ngIf="!form.get('dueAt')?.value"
+              >Criar um lembrete</ng-container
+            >
+          </span>
+          <mat-form-field
+            class="fuse-mat-dense invisible absolute inset-0 -mt-2.5 opacity-0 pointer-events-none"
+            [subscriptSizing]="'dynamic'"
+          >
+            <input
+              matInput
+              [formControlName]="'dueAt'"
+              [matDatepicker]="dueDatePicker"
+            />
+            <mat-datepicker #dueDatePicker>
+              <mat-datepicker-actions>
+                <button
+                  class="text-white"
+                  mat-button
+                  (click)="form.get('dueAt').setValue(null)"
+                  matDatepickerCancel
+                >
+                  Limpar
+                </button>
+                <button
+                  class="text-white"
+                  mat-flat-button
+                  [color]="'primary'"
+                  matDatepickerApply
+                >
+                  Selecionar
+                </button>
+              </mat-datepicker-actions>
+            </mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div
+          class="relative flex w-fit items-center mt-1.5 px-4 leading-9 rounded-full shadow-sm bg-[#F9F9F9] dark:bg-[#202020] text-default cursor-pointer"
+          [matMenuTriggerFor]="hourMenu"
+        >
+          <mat-icon
+            class="icon-size-5 text-current"
+            [svgIcon]="'heroicons_solid:clock'"
+          ></mat-icon>
+          <span class="ml-2 text-md font-medium">
+            <ng-container class="text-white" *ngIf="form.get('dueAt')?.value">{{
+              getSelectedTime()
+            }}</ng-container>
+            <ng-container class="text-white" *ngIf="!form.get('dueAt')?.value"
+              >Adicionar horário</ng-container
+            >
+          </span>
+          <mat-menu class="max-h-80" #hourMenu="matMenu">
+            <button
+              mat-menu-item
+              *ngFor="let item of times"
+              (click)="addTimeToCurrentDate(item.value)"
+            >
+              <span
+                class="inline-flex items-center justify-between w-full min-w-30 leading-5"
+              >
+                <span class="font-medium">{{ item.value }}</span>
+              </span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center mt-4">
+      <div>
+        <div class="font-medium">Status</div>
+        <div
+          class="flex items-center mt-1.5 px-4 leading-9 rounded-full cursor-pointer shadow-sm bg-[#F9F9F9] dark:bg-[#202020] text-default ng-star-inserted"
+          [matMenuTriggerFor]="priorityMenu"
+        >
+          <ng-container>
+            <span class="ml-2 mr-1 text-md font-medium">{{
+              getTaskLeadColumn()?.name
+            }}</span>
+          </ng-container>
+        </div>
+        <mat-menu #priorityMenu="matMenu">
+          <button
+            mat-menu-item
+            *ngFor="let column of leadsColumns"
+            (click)="setTaskLeadColumn(column.id)"
+          >
+            <span
+              class="inline-flex items-center justify-between w-full min-w-30 leading-5"
+            >
+              <span class="font-medium">{{ column.name }}</span>
+            </span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <div>
+        <div class="font-medium mb-1.5">Tags</div>
+        <div class="flex flex-wrap items-center -m-1.5">
+          <ng-container *ngIf="tags.length">
+            <ng-container
+              *ngFor="let tag of form.get('tags').value; trackBy: trackByFn"
+            >
+              <div
+                class="flex items-center justify-center px-4 m-1.5 rounded-full leading-9 shadow-sm bg-[#F9F9F9] dark:bg-[#202020] text-default"
+              >
+                <span class="text-md font-medium whitespace-nowrap">{{
+                  tag.title
+                }}</span>
+              </div>
+            </ng-container>
+          </ng-container>
+          <div
+            class="flex items-center justify-center px-4 m-1.5 rounded-full leading-9 cursor-pointer shadow-sm bg-[#F9F9F9] dark:bg-[#202020] text-default"
+            (click)="openTagsPanel()"
+            #tagsPanelOrigin
+          >
+            <ng-container *ngIf="tags.length">
+              <mat-icon
+                class="icon-size-5"
+                [svgIcon]="'mat_outline:edit'"
+              ></mat-icon>
+              <span class="ml-1.5 text-md font-medium whitespace-nowrap"
+                >Editar</span
+              >
+            </ng-container>
+
+            <ng-container *ngIf="!tags.length">
+              <mat-icon
+                class="icon-size-5"
+                [svgIcon]="'mat_outline:add'"
+              ></mat-icon>
+              <span class="ml-1.5 text-md font-medium whitespace-nowrap"
+                >Adicionar</span
+              >
+            </ng-container>
+
+            <ng-template #tagsPanel>
+              <div class="w-60 rounded border shadow-md bg-card">
+                <div class="flex items-center m-3 mr-2">
+                  <div class="flex items-center">
+                    <mat-icon
+                      class="icon-size-5"
+                      [svgIcon]="'mat_outline:search'"
+                    ></mat-icon>
+                    <div class="ml-2">
+                      <input
+                        class="w-full min-w-0 py-1 border-0"
+                        type="text"
+                        placeholder="Adicione uma tag"
+                        (input)="filterTags($event)"
+                        (keydown)="filterTagsInputKeyDown($event)"
+                        [maxLength]="30"
+                        #newTagInput
+                      />
+                    </div>
+                  </div>
+                  <button
+                    class="ml-1"
+                    mat-icon-button
+                    (click)="toggleTagsEditMode()"
+                  >
+                    <mat-icon
+                      *ngIf="!tagsEditMode"
+                      class="icon-size-5"
+                      [svgIcon]="'mat_outline:edit'"
+                    ></mat-icon>
+                    <mat-icon
+                      *ngIf="tagsEditMode"
+                      class="icon-size-5"
+                      [svgIcon]="'mat_outline:done'"
+                    ></mat-icon>
+                  </button>
+                </div>
+                <div
+                  class="flex flex-col max-h-64 py-2 border-t overflow-y-auto"
+                >
+                  <ng-container *ngIf="!tagsEditMode">
+                    <ng-container
+                      *ngFor="let tag of filteredTags; trackBy: trackByFn"
+                    >
+                      <div
+                        class="flex items-center h-10 min-h-10 pl-1 pr-4 cursor-pointer hover:bg-hover"
+                        (click)="toggleTaskTag(tag)"
+                        matRipple
+                      >
+                        <mat-checkbox
+                          class="flex items-center h-10 min-h-10 pointer-events-none"
+                          [checked]="checkTag(tag)"
+                          [color]="'primary'"
+                          [disableRipple]="true"
+                        >
+                        </mat-checkbox>
+                        <div class="ml-1">{{ tag.title }}</div>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+
+                  <ng-container *ngIf="tagsEditMode">
+                    <div class="py-2 space-y-2">
+                      <ng-container
+                        *ngFor="let tag of filteredTags; trackBy: trackByFn"
+                      >
+                        <div class="flex items-center">
+                          <mat-form-field
+                            class="plenary-mat-dense w-full mx-4"
+                            [subscriptSizing]="'dynamic'"
+                          >
+                            <input
+                              matInput
+                              [value]="tag.title"
+                              (focusout)="updateTagTitle(tag, $event)"
+                            />
+                            <button
+                              class="mr-1"
+                              mat-icon-button
+                              (click)="deleteTag(tag)"
+                              matSuffix
+                            >
+                              <mat-icon
+                                class="icon-size-5"
+                                [svgIcon]="'mat_outline:delete'"
+                              ></mat-icon>
+                            </button>
+                          </mat-form-field>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </ng-container>
+
+                  <div
+                    class="flex items-center h-10 min-h-10 -ml-0.5 pl-4 pr-3 leading-none cursor-pointer hover:bg-hover"
+                    *ngIf="shouldShowCreateTagButton(newTagInput.value)"
+                    (click)="
+                      createTag(newTagInput.value); newTagInput.value = ''
+                    "
+                    matRipple
+                  >
+                    <mat-icon
+                      class="mr-2 icon-size-5"
+                      [svgIcon]="'mat_outline:add'"
+                    ></mat-icon>
+                    <div class="break-all">
+                      Criar "<b>{{ newTagInput.value }}</b
+                      >"
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div
+    class="flex items-center justify-end px-6 py-4 space-x-3 bg-gray-50 dark:bg-black dark:bg-opacity-10"
+  >
+    <ng-container>
+      <button mat-stroked-button (click)="this.service.hideModal()">
+        Cancelar
+      </button>
+    </ng-container>
+
+    <ng-container>
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="closeModal()"
+        [disabled]="form.invalid"
+      >
+        <span class="text-white">Salvar</span>
+        <mat-progress-spinner
+          *ngIf="form.disabled"
+          [diameter]="24"
+          [mode]="'indeterminate'"
+        ></mat-progress-spinner>
+      </button>
+    </ng-container>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+<div class="flex flex-col flex-auto min-w-0 h-full">
+  <plenary-header
+    title="Ações"
+    buttonActionTitle="Criar uma nova ação"
+    (actionListener)="handleAction($event)"
+  ></plenary-header>
+  <div class="px-6 pb-6">
+    <plenary-table
+      *ngIf="data"
+      class="w-full"
+      [config]="config"
+      [data]="data"
+      [selection]="selection"
+      (actionListener)="handleAction($event)"
+    >
+    </plenary-table>
+  </div>
+</div>

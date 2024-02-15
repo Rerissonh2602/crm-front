@@ -1,0 +1,9 @@
+.backdrop-list {
+  width: 100%;
+  height: 100%;
+  transition-duration: 400ms;
+  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition-property: background-color,visibility;
+  background-color: #0000009c !important;
+  z-index: 10;
+}

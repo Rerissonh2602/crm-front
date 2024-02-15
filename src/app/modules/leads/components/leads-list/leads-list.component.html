@@ -1,0 +1,244 @@
+<div class="flex flex-col flex-auto min-w-0 h-full relative">
+  <div *ngIf="showModal || showModalArchived" class="backdrop-list absolute"></div>
+  <plenary-header title="Leads" buttonActionTitle="Exportar relatório" (actionListener)="downloadReport()"></plenary-header>
+  <div
+    class="flex-auto w-full h-full p-6 sm:p-8 sm:pt-4 overflow-y-auto"
+    cdkScrollable
+  >
+    <div
+      class="flex"
+      cdkDropList
+      [cdkDropListData]="columns"
+      [cdkDropListOrientation]="'horizontal'"
+      (cdkDropListDropped)="columnDropped($event)"
+    >
+      <div class="flex items-start" cdkDropListGroup>
+        <ng-container *ngFor="let list of columns; trackBy: trackByFn">
+          <div
+            class="flex-0 w-90 p-2 mr-2 rounded-2xl border bg-card dark:border-[#404040]"
+            cdkDrag
+            cdkDragHandle
+            [cdkDragLockAxis]="'x'"
+            [cdkDragDisabled]="showModal || showModalArchived"
+          >
+            <div class="flex items-center justify-between">
+              <div
+                class="flex items-center w-full py-2 px-3 rounded-md cursor-text border border-transparent focus-within:bg-white focus-within:shadow-sm focus-within:border-primary dark:focus-within:bg-transparent"
+              >
+                <input
+                  class="w-full font-medium leading-5 bg-transparent"
+                  [spellcheck]="'false'"
+                  [value]="list.name"
+                  (focusout)="updateColumnTitle($event, list)"
+                  (keydown.enter)="listTitleInput.blur()"
+                  #listTitleInput
+                />
+              </div>
+              <div
+                class="flex items-center justify-center min-w-6 ml-4 text-sm font-semibold leading-6 rounded-full bg-[#FF7101] text-white"
+              >
+                {{ findLeads(list.id).length }}
+              </div>
+              <div class="ml-1">
+                <button
+                  class="w-8 h-8 min-h-8"
+                  mat-icon-button
+                  [matMenuTriggerFor]="listMenu"
+                >
+                  <mat-icon
+                    class="icon-size-5"
+                    [svgIcon]="'heroicons_solid:dots-vertical'"
+                  ></mat-icon>
+                </button>
+                <mat-menu #listMenu="matMenu">
+                  <button mat-menu-item (click)="renameColumn(listTitleInput)">
+                    <mat-icon
+                      class="icon-size-5"
+                      [svgIcon]="'heroicons_solid:pencil-alt'"
+                    ></mat-icon>
+                    Renomear a coluna
+                  </button>
+                  <button mat-menu-item (click)="deleteColumn(list.id)">
+                    <mat-icon
+                      class="icon-size-5"
+                      [svgIcon]="'heroicons_solid:trash'"
+                    ></mat-icon>
+                    Remover a coluna
+                  </button>
+                </mat-menu>
+              </div>
+            </div>
+            <div class="mt-2 rounded-xl bg-card">
+              <div
+                [id]="list.id"
+                class="p-3 pb-0"
+                cdkDropList
+                [cdkDropListData]="findLeads(list.id)"
+                (cdkDropListDropped)="leadDropped($event)"
+              >
+                <ng-container
+                  *ngFor="let card of findLeads(list.id); trackBy: trackByFn"
+                >
+                  <div
+                    class="flex flex-col items-start mb-3 p-5 shadow-sm space-y-3 border cursor-pointer dark:border-[#404040] rounded-lg overflow-hidden bg-default"
+                    cdkDrag
+                    cdkDragHandle
+                    [cdkDragDisabled]="showModal || showModalArchived"
+                    (click)="service.showModal(card.id)"
+                  >
+                    <div class="text-lg font-medium leading-5">
+                      {{ card.name }}
+                    </div>
+                    <ng-container *ngIf="card.createdBy">
+                      <div
+                        class="flex items-center rounded text-sm font-medium leading-5 text-secondary"
+                        [matTooltip]="'Criado por: ' + card.createdBy.name"
+                      >
+                        <mat-icon
+                          class="icon-size-4 text-current"
+                          [svgIcon]="'mat_outline:account_circle'"
+                        ></mat-icon>
+                        <div class="ml-1">Criado por: {{ card.createdBy.name }}</div>
+                      </div>
+                    </ng-container>
+                    <ng-container *ngIf="isMasterRole">
+                      <div
+                        class="flex items-center rounded text-sm font-medium leading-5 text-secondary"
+                        [matTooltip]="
+                          'Empresa: ' +
+                          (card.company.name)
+                        "
+                      >
+                        <mat-icon
+                          class="icon-size-4 text-current"
+                          [svgIcon]="'heroicons_outline:briefcase'"
+                        ></mat-icon>
+                        <div class="ml-1">
+                          {{ card.company.name }}
+                        </div>
+                      </div>
+                    </ng-container>
+                    <ng-container *ngIf="card.createdAt">
+                      <div
+                        class="flex items-center rounded text-sm font-medium leading-5 text-secondary"
+                        [matTooltip]="
+                          'Criado em: ' +
+                          (card.createdAt | date : 'dd/MM/yyyy HH:mm')
+                        "
+                      >
+                        <mat-icon
+                          class="icon-size-4 text-current"
+                          [svgIcon]="'heroicons_outline:plus-circle'"
+                        ></mat-icon>
+                        <div class="ml-1">
+                          {{ card.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+                        </div>
+                      </div>
+                    </ng-container>
+                    <ng-container *ngIf="card.dueAt">
+                      <div
+                        class="flex items-center rounded text-sm font-medium leading-5 text-secondary"
+                        [matTooltip]="
+                          'Data de vencimento em: ' +
+                          (card.dueAt | date : 'dd/MM/yyyy HH:mm')
+                        "
+                      >
+                        <mat-icon
+                          class="icon-size-4 text-current"
+                          [svgIcon]="'mat_outline:repeat'"
+                        ></mat-icon>
+                        <div class="ml-1">
+                          {{ card.dueAt | date : 'dd/MM/yyyy HH:mm' }}
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </ng-container>
+              </div>
+              <leads-add-card
+                (saved)="addCard(list, $event)"
+                [buttonTitle]="'Adicionar um novo lead'"
+              >
+              </leads-add-card>
+            </div>
+          </div>
+        </ng-container>
+        <div>
+          <div class="px-3">
+            <button
+              class="inset-0 justify-start w-full px-3 mb-2 rounded-xl"
+              mat-button
+              disableRipple
+              (click)="showModalArchived = !showModalArchived"
+            >
+              <mat-icon
+                class="icon-size-5"
+                [svgIcon]="'mat_outline:archive'"
+              ></mat-icon>
+              <span class="ml-2 text-secondary">Ver os leads arquivados</span>
+            </button>
+          </div>
+          <div class="px-3">
+            <button
+              class="inset-0 justify-start w-full px-3 mb-2 rounded-xl"
+              mat-button
+              disableRipple
+              (click)="showModalWin = !showModalWin"
+            >
+              <mat-icon
+                class="icon-size-5"
+                [svgIcon]="'heroicons_outline:check'"
+              ></mat-icon>
+              <span class="ml-2 text-secondary">Ver os leads fechados ganhos</span>
+            </button>
+          </div>
+          <div class="px-3">
+            <button
+              class="inset-0 justify-start w-full px-3 mb-2 rounded-xl"
+              mat-button
+              disableRipple
+              (click)="showModalLost = !showModalLost"
+            >
+              <mat-icon
+                class="icon-size-5"
+                [svgIcon]="'heroicons_outline:x-mark'"
+              ></mat-icon>
+              <span class="ml-2 text-secondary">Ver os leads fechados perdidos</span>
+            </button>
+          </div>
+          <leads-add-list
+            (saved)="addColumn($event)"
+            [buttonTitle]="'Adicionar uma nova coluna'"
+          >
+          </leads-add-list>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<leads-form [@fadeIn] [@fadeOut] *ngIf="showModal" class="z-20"></leads-form>
+<leads-archived
+  class="z-20 flex h-full"
+  [@fadeIn]
+  [@fadeOut]
+  *ngIf="showModalArchived"
+  (changeLeadEvent)="getAll()"
+  (closeModalEvent)="showModalArchived = false"
+></leads-archived>
+<leads-win
+  class="z-20 flex h-full"
+  [@fadeIn]
+  [@fadeOut]
+  *ngIf="showModalWin"
+  (changeLeadEvent)="getAll()"
+  (closeModalEvent)="showModalWin = false"
+></leads-win>
+<leads-lost
+  class="z-20 flex h-full"
+  [@fadeIn]
+  [@fadeOut]
+  *ngIf="showModalLost"
+  (changeLeadEvent)="getAll()"
+  (closeModalEvent)="showModalLost = false"
+></leads-lost>

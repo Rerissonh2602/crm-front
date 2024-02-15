@@ -1,0 +1,10 @@
+<button
+    mat-icon-button
+    [matTooltip]="isFullscreen ? 'Ir para tela cheia' : 'Sair da tela cheia'"
+    (click)="toggleFullscreen()">
+    <ng-container [ngTemplateOutlet]="iconTpl || defaultIconTpl"></ng-container>
+</button>
+
+<ng-template #defaultIconTpl>
+    <mat-icon [svgIcon]="'heroicons_outline:arrows-expand'"></mat-icon>
+</ng-template>

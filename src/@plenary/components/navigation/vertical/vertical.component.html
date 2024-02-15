@@ -1,0 +1,112 @@
+<div class="plenary-vertical-navigation-wrapper">
+  <div class="plenary-vertical-navigation-header">
+    <ng-content select="[plenaryVerticalNavigationHeader]"></ng-content>
+  </div>
+
+  <div
+    class="plenary-vertical-navigation-content"
+    plenaryScrollbar
+    [plenaryScrollbarOptions]="{
+      wheelPropagation: inner,
+      suppressScrollX: true
+    }"
+    #navigationContent
+  >
+    <div class="plenary-vertical-navigation-content-header">
+      <ng-content
+        select="[plenaryVerticalNavigationContentHeader]"
+      ></ng-content>
+    </div>
+
+    <ng-container *ngFor="let item of navigation; trackBy: trackByFn">
+      <ng-container *ngIf="(item.hidden && !item.hidden(item)) || !item.hidden">
+        <ng-container *ngIf="item.type === 'aside'">
+          <plenary-vertical-navigation-aside-item
+            [item]="item"
+            [name]="name"
+            [activeItemId]="activeAsideItemId"
+            [autoCollapse]="autoCollapse"
+            [skipChildren]="true"
+            (click)="toggleAside(item)"
+          ></plenary-vertical-navigation-aside-item>
+        </ng-container>
+
+        <ng-container *ngIf="item.type === 'basic'">
+          <plenary-vertical-navigation-basic-item
+            [item]="item"
+            [name]="name"
+          ></plenary-vertical-navigation-basic-item>
+        </ng-container>
+
+        <ng-container *ngIf="item.type === 'collapsable'">
+          <plenary-vertical-navigation-collapsable-item
+            [item]="item"
+            [name]="name"
+            [autoCollapse]="autoCollapse"
+          ></plenary-vertical-navigation-collapsable-item>
+        </ng-container>
+
+        <ng-container *ngIf="item.type === 'divider'">
+          <plenary-vertical-navigation-divider-item
+            [item]="item"
+            [name]="name"
+          ></plenary-vertical-navigation-divider-item>
+        </ng-container>
+
+        <ng-container *ngIf="item.type === 'group'">
+          <plenary-vertical-navigation-group-item
+            [item]="item"
+            [name]="name"
+            [autoCollapse]="autoCollapse"
+          ></plenary-vertical-navigation-group-item>
+        </ng-container>
+
+        <ng-container *ngIf="item.type === 'spacer'">
+          <plenary-vertical-navigation-spacer-item
+            [item]="item"
+            [name]="name"
+          ></plenary-vertical-navigation-spacer-item>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+    <div class="plenary-vertical-navigation-content-footer">
+      <ng-content
+        select="[plenaryVerticalNavigationContentFooter]"
+      ></ng-content>
+    </div>
+  </div>
+
+  <div class="plenary-vertical-navigation-footer">
+    <ng-content select="[plenaryVerticalNavigationFooter]"></ng-content>
+  </div>
+</div>
+
+<ng-container *ngIf="activeAsideItemId">
+  <div
+    class="plenary-vertical-navigation-aside-wrapper"
+    plenaryScrollbar
+    [plenaryScrollbarOptions]="{
+      wheelPropagation: false,
+      suppressScrollX: true
+    }"
+    [@fadeInLeft]="position === 'left'"
+    [@fadeInRight]="position === 'right'"
+    [@fadeOutLeft]="position === 'left'"
+    [@fadeOutRight]="position === 'right'"
+  >
+    <ng-container *ngFor="let item of navigation; trackBy: trackByFn">
+      <ng-container *ngIf="(item.hidden && !item.hidden(item)) || !item.hidden">
+        <ng-container
+          *ngIf="item.type === 'aside' && item.id === activeAsideItemId"
+        >
+          <plenary-vertical-navigation-aside-item
+            [item]="item"
+            [name]="name"
+            [autoCollapse]="autoCollapse"
+          ></plenary-vertical-navigation-aside-item>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </div>
+</ng-container>

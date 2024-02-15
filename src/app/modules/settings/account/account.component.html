@@ -1,0 +1,58 @@
+<div class="w-full max-w-4xl">
+  <form [formGroup]="accountForm">
+    <div class="w-full">
+      <div class="text-xl">Minha conta</div>
+      <div class="text-secondary">Modifique seus dados pessoais!</div>
+    </div>
+
+    <div class="grid sm:grid-cols-4 gap-6 w-full mt-8">
+      <div class="sm:col-span-4">
+        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+          <mat-label>Nome</mat-label>
+          <mat-icon
+            class="icon-size-5"
+            [svgIcon]="'heroicons_solid:information-circle'"
+            matPrefix
+          ></mat-icon>
+          <input [formControlName]="'name'" type="text" matInput />
+          <mat-error *ngIf="accountForm.get('name').hasError('required')">
+            O nome é obrigatório.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="sm:col-span-4">
+        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+          <mat-label>E-mail</mat-label>
+          <mat-icon
+            class="icon-size-5"
+            [svgIcon]="'heroicons_solid:at-symbol'"
+            matPrefix
+          ></mat-icon>
+          <input [formControlName]="'email'" type="email" matInput />
+          <mat-error *ngIf="accountForm.get('email').hasError('required')">
+            O e-mail é obrigatório.
+          </mat-error>
+          <mat-error *ngIf="accountForm.get('email').hasError('email')">
+            Por favor insira um e-mail válido.
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="my-10 border-[#DCE0E4] dark:border-[#404040] border-t"></div>
+
+    <div class="flex items-center justify-end">
+      <button
+        class="ml-4"
+        mat-flat-button
+        type="button"
+        [disabled]="accountForm.invalid"
+        (click)="handleSave()"
+        [color]="'primary'"
+      >
+        Salvar
+      </button>
+    </div>
+  </form>
+</div>

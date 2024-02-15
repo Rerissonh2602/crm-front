@@ -1,0 +1,84 @@
+<div
+  class="flex flex-auto xs:min-w-screen sm:w-128 z-100 overflow-y-visible bg-white dark:bg-[#101010] border-l border-[#DCE0E4] dark:border-[#404040]"
+>
+  <div
+    class="flex flex-col w-full h-full flex-auto p-6 pt-10 sm:p-8 sm:pt-10 overflow-y-auto"
+  >
+    <div class="flex items-center justify-between -mt-3">
+      <button class="flex" mat-icon-button (click)="closeModal()">
+        <mat-icon [svgIcon]="'mat_outline:close'"></mat-icon>
+      </button>
+      <button class="flex" mat-icon-button (click)="downloadReport()">
+        <mat-icon [svgIcon]="'mat_outline:download'"></mat-icon>
+      </button>
+    </div>
+
+    <mat-divider class="mt-6 mb-8"></mat-divider>
+
+    <ng-container *ngFor="let card of leadsLost">
+      <div
+        class="flex flex-row justify-between mb-3 p-5 shadow-sm space-y-3 border cursor-pointer dark:border-[#404040] rounded-lg overflow-hidden bg-default"
+      >
+        <div class="flex flex-col justify-between">
+          <div class="text-lg font-medium leading-5">
+            {{ card.name }}
+          </div>
+          <ng-container *ngIf="card.tags"> </ng-container>
+          <ng-container *ngIf="card.createdAt">
+            <div
+              class="flex items-center rounded text-sm font-medium leading-5 text-secondary"
+              [matTooltip]="
+                'Criado em: ' +
+                (card.createdAt | date : 'EEEE, MMMM d, y h:mm a')
+              "
+            >
+              <mat-icon
+                class="icon-size-4 text-current"
+                [svgIcon]="'heroicons_outline:plus-circle'"
+              ></mat-icon>
+              <div class="ml-1">
+                {{ card.createdAt | date : 'medium' }}
+              </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="card.dueAt">
+            <div
+              class="flex items-center rounded text-sm font-medium leading-5 text-secondary"
+              [matTooltip]="
+                'Data de vencimento em: ' +
+                (card.createdAt | date : 'EEEE, MMMM d, y h:mm a')
+              "
+            >
+              <mat-icon
+                class="icon-size-4 text-current"
+                [svgIcon]="'mat_outline:repeat'"
+              ></mat-icon>
+              <div class="ml-1">
+                {{ card.dueAt | date : 'longDate' }}
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+        <button mat-icon-button [matMenuTriggerFor]="leadActions">
+          <span class="relative">
+            <mat-icon
+              class="text-[#7B8189]"
+              [svgIcon]="'mat_outline:more_vert'"
+            ></mat-icon>
+          </span>
+        </button>
+
+        <mat-menu [xPosition]="'before'" #leadActions="matMenu">
+          <button mat-menu-item (click)="deleteLead(card.id)">
+            <mat-icon
+              class="icon-size-5"
+              [svgIcon]="'mat_outline:delete'"
+            ></mat-icon>
+            Remover
+          </button>
+        </mat-menu>
+      </div>
+    </ng-container>
+  </div>
+</div>

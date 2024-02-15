@@ -1,0 +1,142 @@
+<button class="mr-2" mat-icon-button (click)="openPanel()" #notificationsOrigin>
+  <span class="p-2" *ngIf="getUnreadNotifications().length !== 0">
+    <mat-icon
+      [matBadge]="getUnreadNotifications().length"
+      [hidden]="getUnreadNotifications().length == 0"
+      class="flex"
+      [svgIcon]="'mat_outline:notifications'"
+    ></mat-icon>
+  </span>
+  <span class="p-2" *ngIf="getUnreadNotifications().length === 0">
+    <mat-icon
+      class="flex"
+      [svgIcon]="'mat_outline:notifications'"
+    ></mat-icon>
+  </span>
+</button>
+
+<ng-template #notificationsPanel>
+  <div
+    class="fixed md:mt-2 inset-0 sm:static sm:inset-auto flex flex-col sm:min-w-90 sm:w-90 md:rounded-lg overflow-hidden bg-card border border-[#DCE0E4] dark:border-[#404040] shadow-lg"
+  >
+    <div
+      class="flex shrink-0 items-center py-4 pr-4 pl-6 border-b dark:border-[#404040]"
+    >
+      <div class="sm:hidden -ml-1 mr-3">
+        <button mat-icon-button (click)="closePanel()">
+          <mat-icon
+            class="icon-size-5 text-current"
+            [svgIcon]="'mat_outline:close'"
+          ></mat-icon>
+        </button>
+      </div>
+      <div>
+        <div class="font-semibold text-md">Notificações</div>
+        <div class="font-normal text-sm text-secondary">
+          {{
+            !notifications ||
+            !notifications.length ||
+            !getUnreadNotifications().length
+              ? 'Você não possui nenhuma notificação'
+              : 'Você possuí ' +
+                getUnreadNotifications().length +
+                ' notificações não lidas'
+          }}
+        </div>
+      </div>
+      <div
+        class="ml-auto"
+        *ngIf="
+          notifications &&
+          notifications.length &&
+          getUnreadNotifications().length
+        "
+      >
+        <button
+          mat-icon-button
+          (click)="markAllRead()"
+          [matTooltip]="'Marcar todas como lida'"
+        >
+          <mat-icon
+            class="text-primary"
+            [svgIcon]="'mat_outline:done_all'"
+          ></mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="relative flex flex-col flex-auto sm:max-h-120 overflow-y-auto bg-card"
+    >
+      <ng-container *ngIf="notifications && notifications.length">
+        <div
+          *ngIf="getUnreadNotifications() && getUnreadNotifications().length"
+        >
+          <p class="text-sm text-[#959595] font-bold uppercase py-3 px-6">
+            Novo
+          </p>
+          <div
+            class="flex flex-row w-full items-center justify-center py-4 px-6 border-b bg-[#EDEFF2] border-white dark:bg-[#151515] dark:border-[#404040]"
+            *ngFor="let item of getUnreadNotifications()"
+          >
+            <div class="flex flex-col flex-auto justify-center">
+              <div
+                class="text-md text-[#637381] dark:text-white font-semibold text-left tracking-tight"
+              >
+                {{ item.notification.name }}
+              </div>
+              <div
+                class="w-full max-w-60 mt-1 text-sm text-left text-secondary"
+              >
+                {{ item.notification.subtitle }}
+              </div>
+            </div>
+            <div class="flex flex-row gap-2 items-center">
+              <button
+                mat-icon-button
+                [matTooltip]="'Marcar como lida'"
+                (click)="markRead(item.id)"
+              >
+                <mat-icon [svgIcon]="'mat_outline:mark_email_read'"></mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="getReadNotifications() && getReadNotifications().length">
+          <p class="text-sm text-[#959595] font-bold uppercase py-3 px-6">
+            Lido
+          </p>
+          <div
+            class="flex flex-row w-full items-center justify-center py-4 px-6"
+            *ngFor="let item of getReadNotifications()"
+          >
+            <div class="flex flex-col flex-auto justify-center">
+              <div
+                class="text-md text-[#637381] dark:text-white font-semibold text-left tracking-tight"
+              >
+                {{ item.notification.name }}
+              </div>
+              <div
+                class="w-full max-w-60 mt-1 text-sm text-left text-secondary"
+              >
+                {{ item.notification.subtitle }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="!notifications || !notifications.length">
+        <div
+          class="flex flex-col flex-auto items-start justify-center sm:justify-start py-4 px-6"
+        >
+          <div class="text-md font-semibold text-left tracking-tight">
+            Nenhuma notificação
+          </div>
+          <div class="w-full max-w-60 mt-1 text-sm text-left text-secondary">
+            Quando você receber notificações, elas aparecerão aqui.
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>

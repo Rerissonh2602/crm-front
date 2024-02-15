@@ -1,0 +1,73 @@
+<div
+  class="plenary-alert-container"
+  *ngIf="!dismissible || (dismissible && !dismissed)"
+  [@fadeIn]="!dismissed"
+  [@fadeOut]="!dismissed"
+>
+  <div class="plenary-alert-border" *ngIf="appearance === 'border'"></div>
+
+  <div class="plenary-alert-icon" *ngIf="showIcon">
+    <div class="plenary-alert-custom-icon">
+      <ng-content select="[plenaryAlertIcon]"></ng-content>
+    </div>
+
+    <div class="plenary-alert-default-icon">
+      <mat-icon
+        *ngIf="type === 'primary'"
+        [svgIcon]="'heroicons_solid:check-circle'"
+      ></mat-icon>
+
+      <mat-icon
+        *ngIf="type === 'accent'"
+        [svgIcon]="'heroicons_solid:check-circle'"
+      ></mat-icon>
+
+      <mat-icon
+        *ngIf="type === 'warn'"
+        [svgIcon]="'heroicons_solid:x-circle'"
+      ></mat-icon>
+
+      <mat-icon
+        *ngIf="type === 'basic'"
+        [svgIcon]="'heroicons_solid:check-circle'"
+      ></mat-icon>
+
+      <mat-icon
+        *ngIf="type === 'info'"
+        [svgIcon]="'heroicons_solid:information-circle'"
+      ></mat-icon>
+
+      <mat-icon
+        *ngIf="type === 'success'"
+        [svgIcon]="'heroicons_solid:check-circle'"
+      ></mat-icon>
+
+      <mat-icon
+        *ngIf="type === 'warning'"
+        [svgIcon]="'heroicons_solid:exclamation'"
+      ></mat-icon>
+
+      <mat-icon
+        *ngIf="type === 'error'"
+        [svgIcon]="'heroicons_solid:x-circle'"
+      ></mat-icon>
+    </div>
+  </div>
+  <div class="plenary-alert-content">
+    <div class="plenary-alert-title">
+      <ng-content select="[plenaryAlertTitle]"></ng-content>
+    </div>
+
+    <div class="plenary-alert-message">
+      <ng-content></ng-content>
+    </div>
+  </div>
+
+  <button
+    class="plenary-alert-dismiss-button"
+    mat-icon-button
+    (click)="dismiss()"
+  >
+    <mat-icon [svgIcon]="'heroicons_solid:x'"></mat-icon>
+  </button>
+</div>

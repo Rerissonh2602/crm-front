@@ -1,0 +1,57 @@
+<div class="flex flex-col overflow-hidden">
+  <div class="flex flex-col p-6 sm:p-10 overflow-y-auto" cdkScrollable>
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full"
+      *ngIf="dataSource && dataSource.length > 0"
+    >
+      <plenary-card
+        *ngFor="let item of dataSource"
+        class="flex flex-col w-full px-4 pt-4 pb-4 filter-list"
+      >
+        <div class="flex items-center justify-between">
+          <div class="flex items-center flex-row">
+            <mat-checkbox
+              color="primary"
+              (click)="$event.stopPropagation()"
+              [checked]="selection.isSelected(item?.id)"
+              (change)="selection.toggle(item?.id)"
+            >
+            </mat-checkbox>
+            <div>
+              <div class="text-2xl font-semibold leading-tight">
+                {{ title ? item[title] : item.name }}
+              </div>
+              <div *ngIf="subtitle" class="text-secondary text-md mt-1">
+                {{ getKeyByValue(item, subtitle) }}
+              </div>
+            </div>
+          </div>
+          <div>
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon
+                class="icon-size-5"
+                [svgIcon]="'heroicons_solid:dots-vertical'"
+              ></mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button
+                mat-menu-item
+                (click)="actionListener.emit({ action: 'form', id: item.id })"
+              >
+                <mat-icon [svgIcon]="'heroicons_outline:pencil'"></mat-icon>
+                <span>Editar</span>
+              </button>
+              <button
+                mat-menu-item
+                (click)="actionListener.emit({ action: 'delete', id: item.id })"
+              >
+                <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                <span>Remover</span>
+              </button>
+            </mat-menu>
+          </div>
+        </div>
+      </plenary-card>
+    </div>
+  </div>
+</div>

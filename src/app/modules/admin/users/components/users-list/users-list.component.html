@@ -1,0 +1,21 @@
+<div class="flex flex-col flex-auto min-w-0 h-full">
+  <plenary-header
+    title="Usuários"
+    buttonActionTitle="Criar um novo usuário"
+    (actionListener)="handleAction($event)"
+  ></plenary-header>
+  <div class="px-6 pb-6">
+    <plenary-table
+      *ngIf="data"
+      class="w-full"
+      [config]="config"
+      [data]="data"
+      [selection]="selection"
+      (actionListener)="handleAction($event)"
+      (filtered)="getAll($event)"
+      (sortabled)="handleSort($event)"
+      (paginated)="handlePaginator($event)"
+    >
+    </plenary-table>
+  </div>
+</div>

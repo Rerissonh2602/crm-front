@@ -1,0 +1,85 @@
+<div class="flex flex-col flex-auto items-center sm:justify-center min-w-0 bg-auth-image dark:bg-none bg-cover bg-center">
+  <!-- <div class="w-12">
+    <img src="assets/images/logo/logo.svg" />
+  </div> -->
+  <div
+    class="w-full sm:w-auto py-8 px-4 sm:p-12"
+  >
+    <div class="w-full max-w-100 sm:w-100 mx-auto sm:mx-0">
+      <div class="mt-8 text-4xl font-extrabold tracking-tight leading-tight">
+        Login
+      </div>
+      <div class="mt-2 text-lg font-normal ">
+        Insira as credenciais abaixo.
+      </div>
+
+      <form class="mt-8" [formGroup]="signInForm" (ngSubmit)="signIn()" #signInNgForm="ngForm">
+        <mat-form-field class="w-full mb-2">
+          <mat-label>E-mail</mat-label>
+          <input id="email" matInput [formControlName]="'email'" />
+          <mat-error *ngIf="signInForm.get('email').hasError('required')">
+            O e-mail é obrigatório
+          </mat-error>
+          <mat-error *ngIf="signInForm.get('email').hasError('email')">
+            Por favor insira um e-mail válido.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-full mb-2">
+          <mat-label>Senha</mat-label>
+          <input
+            id="password"
+            matInput
+            type="password"
+            [formControlName]="'password'"
+            #passwordField
+          />
+          <button
+            mat-icon-button
+            type="button"
+            (click)="
+              passwordField.type === 'password'
+                ? (passwordField.type = 'text')
+                : (passwordField.type = 'password')
+            "
+            matSuffix
+          >
+            <mat-icon
+              class="icon-size-5"
+              *ngIf="passwordField.type === 'password'"
+              [svgIcon]="'heroicons_solid:eye'"
+            ></mat-icon>
+            <mat-icon
+              class="icon-size-5"
+              *ngIf="passwordField.type === 'text'"
+              [svgIcon]="'heroicons_solid:eye-off'"
+            ></mat-icon>
+          </button>
+          <mat-error> A senha é obrigatória. </mat-error>
+        </mat-form-field>
+
+        <div class="inline-flex items-center justify-between w-full mt-1.5">
+          <a
+            class="text-md font-medium text-primary-500 hover:underline"
+            [routerLink]="['/esqueci-minha-senha']"
+            >Esqueceu sua senha?
+          </a>
+        </div>
+
+        <button
+          class="plenary-mat-button-large w-full mt-6"
+          mat-flat-button
+          [color]="'primary'"
+          [disabled]="signInForm.disabled"
+        >
+          <span class="text-white" *ngIf="!signInForm.disabled">Entrar</span>
+          <mat-progress-spinner
+            *ngIf="signInForm.disabled"
+            [diameter]="24"
+            [mode]="'indeterminate'"
+          ></mat-progress-spinner>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

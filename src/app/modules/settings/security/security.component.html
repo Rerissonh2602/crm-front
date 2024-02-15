@@ -1,0 +1,89 @@
+<div class="w-full max-w-4xl">
+  <form [formGroup]="securityForm">
+    <div class="w-full">
+      <div class="text-xl">Modifique sua senha</div>
+      <div class="text-secondary">
+        Altere sua senha para aprimorar a segurança da sua conta!
+      </div>
+    </div>
+    <div class="grid sm:grid-cols-4 gap-6 w-full mt-8">
+      <div class="sm:col-span-4">
+        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+          <mat-label>Senha atual</mat-label>
+          <mat-icon
+            class="icon-size-5"
+            [svgIcon]="'heroicons_solid:key'"
+            matPrefix
+          ></mat-icon>
+          <input
+            [formControlName]="'password'"
+            type="password"
+            matInput
+          />
+          <mat-error>A senha é obrigatória.</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="sm:col-span-4">
+        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+          <mat-label>Nova senha</mat-label>
+          <mat-icon
+            class="icon-size-5"
+            [svgIcon]="'heroicons_solid:key'"
+            matPrefix
+          ></mat-icon>
+          <input [formControlName]="'newPassword'" type="password" matInput />
+        </mat-form-field>
+        <div class="mt-1 text-md text-hint">
+          Mínimo 8 caracteres. Deve incluir números, letras e caracteres
+          especiais.
+        </div>
+      </div>
+
+      <div class="sm:col-span-4">
+        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+          <mat-label>Nova senha (confirmação)</mat-label>
+          <mat-icon
+            class="icon-size-5"
+            [svgIcon]="'heroicons_solid:key'"
+            matPrefix
+          ></mat-icon>
+          <input
+            [formControlName]="'confirmPassword'"
+            type="password"
+            matInput
+          />
+          <mat-error
+            *ngIf="securityForm.get('confirmPassword').hasError('required')"
+          >
+            A confirmação da senha é obrigatória.
+          </mat-error>
+          <mat-error
+            *ngIf="securityForm.get('confirmPassword').hasError('mustMatch')"
+          >
+            As senhas devem ser iguais.
+          </mat-error>
+        </mat-form-field>
+        <div class="mt-1 text-md text-hint">
+          Mínimo 8 caracteres. Deve incluir números, letras e caracteres
+          especiais.
+        </div>
+      </div>
+    </div>
+
+    <div class="my-10 border-[#DCE0E4] dark:border-[#404040] border-t"></div>
+
+    <div class="flex items-center justify-end">
+      <button
+        class="ml-4"
+        mat-flat-button
+        type="button"
+        [disabled]="securityForm.invalid"
+        (click)="handleSave()"
+        [color]="'primary'"
+      >
+        Salvar
+      </button>
+    </div>
+  </form>
+</div>

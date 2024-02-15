@@ -1,0 +1,80 @@
+<div
+  class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between px-6 py-6 sm:px-6 dark:bg-transparent"
+>
+  <div class="flex-1 min-w-0">
+    <div>
+      <div class="flex flex-row flex-wrap justify-between items-center">
+        <div class="flex flex-wrap items-center font-medium">
+          <div class="flex flex-col">
+            <div>
+              <h2
+                class="text-3xl font-medium tracking-tight leading-7 sm:leading-10 truncate"
+              >
+                {{ title }}
+              </h2>
+            </div>
+            <div class="flex flex-row justify-center items-center">
+              <div
+                class="flex justify-center items-center whitespace-nowrap"
+                [ngClass]="item.label !== 'Dashboard' && 'ml-1'"
+                *ngFor="let item of items; let last = last"
+              >
+                <a
+                  [routerLink]="item.url"
+                  [ngClass]="last && 'text-primary font-bold'"
+                  class="flex"
+                  >{{ item.label }}</a
+                >
+                <span class="flex ml-1" *ngIf="!last">
+                  <mat-icon
+                    class="flex"
+                    [ngClass]="last && 'text-[#BDBDBD] font-bold'"
+                    [svgIcon]="'mat_outline:chevron_right'"
+                  ></mat-icon>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          *ngIf="buttonActionTitle && creatable"
+          class="flex flex-row items-start justify-between sm:justify-end w-full sm:w-max shrink-0 mt-6 sm:mt-0 sm:ml-4"
+        >
+          <div class="flex sm:hidden">
+            <a
+              class="inline-flex items-center text-secondary font-medium"
+              [routerLink]="'./..'"
+            >
+              <mat-icon
+                class="text-secondary"
+                [svgIcon]="'mat_outline:chevron_left'"
+              ></mat-icon>
+              <span class="ml-1">Voltar</span>
+            </a>
+          </div>
+          <button
+            mat-flat-button
+            color="primary"
+            class="text-white"
+            (click)="actionListener.emit({ action: 'form', id: null })"
+          >
+            <mat-icon [svgIcon]="'mat_outline:add'"></mat-icon>
+            <span class="sm:ml-1 text-white hidden sm:flex">{{ buttonActionTitle }}</span>
+          </button>
+        </div>
+      </div>
+      <div class="flex sm:hidden mt-2" *ngIf="!buttonActionTitle">
+        <a
+          class="inline-flex items-center text-secondary font-medium"
+          [routerLink]="'./..'"
+        >
+          <mat-icon
+            class="text-secondary"
+            [svgIcon]="'mat_outline:chevron_left'"
+          ></mat-icon>
+          <span class="ml-1">Voltar</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
